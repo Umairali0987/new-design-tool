@@ -1,0 +1,44 @@
+{
+  "_comment": "Extra per-slug API boards. groupA = boards-api.greenhouse.io/v1/boards/SLUG/jobs, groupB = api.lever.co/v0/postings/SLUG, groupC = api.ashbyhq.com/posting-api/job-board/SLUG. All slugs below verified returning data; dead slugs are skipped automatically.",
+  "groupA": [
+    "stripe",
+    "airbnb",
+    "lyft",
+    "instacart",
+    "robinhood",
+    "twitch",
+    "asana",
+    "samsara",
+    "gusto",
+    "brex",
+    "coinbase",
+    "discord",
+    "figma",
+    "gitlab",
+    "anthropic",
+    "databricks",
+    "dropbox",
+    "cloudflare",
+    "reddit"
+  ],
+  "groupB": [
+    "spotify",
+    "ro",
+    "palantir"
+  ],
+  "groupC": [
+    "vercel",
+    "supabase",
+    "clerk",
+    "resend",
+    "posthog",
+    "linear",
+    "notion",
+    "openai",
+    "ramp",
+    "runway",
+    "modal",
+    "perplexity",
+    "cohere"
+  ]
+}

@@ -1,0 +1,45 @@
+name: Scheduled Notifier
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # every 10 min. FREE only on a PUBLIC repo
+      # (private repos get 2,000 Actions min/month; */10 would exceed it — keep repo public).
+      # GitHub's scheduler is best-effort and may add a few minutes under load.
+  workflow_dispatch: {} # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write # needed to commit the state file back
+
+concurrency:
+  group: notifier
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch & notify
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Optional — only needed if you add Adzuna (see README). Safe to leave unset.
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          ADZUNA_COUNTRY: ${{ vars.ADZUNA_COUNTRY }}
+        run: node fetch.mjs
+
+      - name: Persist state
+        run: |
+          if ! git diff --quiet seen.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add seen.json
+            git commit -m "update state [skip ci]"
+            git push
+          fi
