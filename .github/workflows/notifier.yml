@@ -32,6 +32,8 @@ jobs:
           ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
           ADZUNA_COUNTRY: ${{ vars.ADZUNA_COUNTRY }}
+          # Optional — JSearch (LinkedIn/Indeed via Google for Jobs). Safe to leave unset.
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
         run: node fetch.mjs
 
       - name: Persist state

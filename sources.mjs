@@ -233,6 +233,30 @@ export async function f9({ id, key, country = "gb" }) {
   return out;
 }
 
+// ---------- F10 (aggregator incl. LinkedIn/Indeed via Google for Jobs; needs key) ----------
+export async function fj({ key }) {
+  const host = "jsearch.p.rapidapi.com";
+  const headers = { "X-RapidAPI-Key": key, "X-RapidAPI-Host": host };
+  const queries = ["full stack developer in Pakistan", "MERN OR Node.js developer remote"];
+  const out = [];
+  for (const q of queries) {
+    const u = `https://${host}/search?query=${encodeURIComponent(q)}&page=1&num_pages=1&date_posted=week`;
+    const { data = [] } = await getJSON(u, { headers }).catch(() => ({ data: [] }));
+    for (const j of data || []) {
+      out.push({
+        id: "f10:" + j.job_id,
+        title: j.job_title,
+        company: j.employer_name || "—",
+        location: [j.job_city, j.job_country].filter(Boolean).join(", ") || (j.job_is_remote ? "Remote" : "—"),
+        tags: [j.job_publisher].filter(Boolean), // e.g. "LinkedIn", "Indeed", "Glassdoor"
+        url: j.job_apply_link || j.job_google_link,
+        source: "F10",
+      });
+    }
+  }
+  return out;
+}
+
 // ---------- Assemble active sources from config ----------
 export function getSources(cfg) {
   const s = [
@@ -251,6 +275,9 @@ export function getSources(cfg) {
   for (const slug of c.groupC || []) s.push({ label: `C:${slug}`, fn: () => gc(slug) });
   if (cfg.adzuna && cfg.adzuna.id && cfg.adzuna.key)
     s.push({ label: "F9", fn: () => f9(cfg.adzuna) });
+  // F10 only runs in its throttled time-slot (set in fetch.mjs) to respect the free tier
+  if (cfg.jsearch && cfg.jsearch.key && cfg.jsearch.enabled)
+    s.push({ label: "F10", fn: () => fj(cfg.jsearch) });
   return s;
 }
 

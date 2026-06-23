@@ -76,6 +76,11 @@ async function main() {
   try {
     companies = JSON.parse(await readFile(new URL("./companies.json", import.meta.url), "utf8"));
   } catch {}
+  // JSearch (F10) free tier is small (~200/mo), so only fire it in 2 daily slots
+  // (06:0x & 18:0x UTC ≈ 11am & 11pm PKT). Catches LinkedIn/Indeed listings.
+  const now = new Date();
+  const jsearchSlot = [6, 18].includes(now.getUTCHours()) && now.getUTCMinutes() < 9;
+
   const cfg = {
     companies,
     adzuna: {
@@ -83,6 +88,7 @@ async function main() {
       key: process.env.ADZUNA_APP_KEY,
       country: process.env.ADZUNA_COUNTRY || "gb",
     },
+    jsearch: { key: process.env.RAPIDAPI_KEY, enabled: jsearchSlot },
   };
 
   const sources = getSources(cfg);

@@ -49,6 +49,8 @@ The schedule is every 10 min (see `.github/workflows/*.yml`) — change the cron
 - `sources.mjs` — the list of public APIs polled (add/remove here).
 - `companies.json` — extra company API boards to include.
 - Optional: set `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` secrets to pull from Adzuna too.
+- Optional: set `RAPIDAPI_KEY` secret to enable F10 (JSearch — LinkedIn/Indeed/Glassdoor via
+  Google for Jobs). Throttled to 2 slots/day (06:0x & 18:0x UTC) to respect the free tier.
 
 ## Test locally
 ```bash
